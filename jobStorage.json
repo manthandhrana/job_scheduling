@@ -1,0 +1,22 @@
+[
+  {
+    "name": "weeklyJob",
+    "type": "weekly",
+    "cronTime": "0 8 * * 0"
+  },
+  {
+    "name": "hourlyJob",
+    "type": "hourly",
+    "cronTime": "15 * * * *"
+  },
+  {
+    "name": "dailyJob",
+    "type": "daily",
+    "cronTime": "30 10 * * *"
+  },
+  {
+    "name": "dailyJob",
+    "type": "daily",
+    "cronTime": "30 10 * * *"
+  }
+]
