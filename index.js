@@ -2,8 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { loadJobs, addJob } = require('./scheduler');
 const swaggerUi = require('swagger-ui-express');
-const path = require('path');
-const swaggerDocument = YAML.load(path.join(__dirname, 'swagger.yaml'));
+const swaggerDocument = require('./swagger');
 const app = express();
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
@@ -12,6 +11,9 @@ app.use(bodyParser.json());
 
 loadJobs();
 
+app.get('/', (req, res) => {
+res.status(200).send("Welcome to job scheduling site")
+})
 app.post('/schedule', (req, res) => {
   const { name, type, minute, hour, day } = req.body;
 

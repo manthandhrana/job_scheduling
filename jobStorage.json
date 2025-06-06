@@ -18,5 +18,15 @@
     "name": "dailyJob",
     "type": "daily",
     "cronTime": "30 10 * * *"
+  },
+  {
+    "name": "dailyJob",
+    "type": "daily",
+    "cronTime": "30 10 * * *"
+  },
+  {
+    "name": "hourlyJob",
+    "type": "hourly",
+    "cronTime": "15 * * * *"
   }
 ]
