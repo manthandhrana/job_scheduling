@@ -5,11 +5,12 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger');
 const app = express();
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use(bodyParser.json());
+app.use(express.json());
 
 loadJobs();
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.get('/', (req, res) => {
 res.status(200).send("Welcome to job scheduling site")
