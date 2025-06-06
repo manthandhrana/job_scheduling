@@ -2,8 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { loadJobs, addJob } = require('./scheduler');
 const swaggerUi = require('swagger-ui-express');
-const YAML = require('yamljs');
-const swaggerDocument = YAML.load('./swagger.yaml');
+const path = require('path');
+const swaggerDocument = YAML.load(path.join(__dirname, 'swagger.yaml'));
 const app = express();
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
