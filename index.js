@@ -2,6 +2,9 @@ const express = require('express');
 const { loadJobs, addJob, runScheduler } = require('./scheduler');
 const bodyParser = require('body-parser');
 const swaggerUi = require('swagger-ui-express');
+
+const path = require('path');
+const fs = require('fs');
 const swaggerDocument = require('./swagger'); // If you have a swagger.js or YAML loader
 const app = express();
 
@@ -10,8 +13,13 @@ app.use(express.json());
 
 loadJobs();
 runScheduler();
+app.use('/swagger-ui', express.static(path.join(__dirname, 'node_modules/swagger-ui-dist')));
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
+  customCssUrl: '/swagger-ui/swagger-ui.css',
+  customJs: '/swagger-ui/swagger-ui-bundle.js'
+}));
 
 app.get('/', (req, res) => {
   res.status(200).send("Welcome to job scheduling site");
