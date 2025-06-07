@@ -17,8 +17,11 @@ app.use('/swagger-ui', express.static(path.join(__dirname, 'node_modules/swagger
 
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
-  customCssUrl: '/swagger-ui/swagger-ui.css',
-  customJs: '/swagger-ui/swagger-ui-bundle.js'
+  customCssUrl: 'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui.css',
+  customJs: [
+    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui-bundle.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui-standalone-preset.js'
+  ]
 }));
 
 app.get('/', (req, res) => {
@@ -27,48 +30,39 @@ app.get('/', (req, res) => {
 
 
 app.post('/schedule', (req, res) => {
-  const { name, type, minute, hour, day } = req.body;
+  try {
+    const { name, type, minute = 0, hour = 0, day = 0 } = req.body;
 
-  if (!name || !type) {
-    return res.status(400).send({ error: 'Missing required job name or type' });
-  }
-
-  let cronTime = '';
-  let schedule = {};
-
-  if (type === 'hourly') {
-    if (minute === undefined) return res.status(400).send({ error: 'Minute required for hourly job' });
-
-    cronTime = `${minute} * * * *`;
-    schedule = { minute };
-  } else if (type === 'daily') {
-    if (minute === undefined || hour === undefined) {
-      return res.status(400).send({ error: 'Hour and minute required for daily job' });
+    if (!name || !type) {
+      return res.status(400).send({ error: 'Missing required fields: name or type' });
     }
 
-    cronTime = `${minute} ${hour} * * *`;
-    schedule = { minute, hour };
-  } else if (type === 'weekly') {
-    if (minute === undefined || hour === undefined || day === undefined) {
-      return res.status(400).send({ error: 'Day, hour and minute required for weekly job' });
+    let cronTime = null;
+
+    if (type === 'hourly') {
+      cronTime = { minute: parseInt(minute) };
+    } else if (type === 'daily') {
+      cronTime = { minute: parseInt(minute), hour: parseInt(hour) };
+    } else if (type === 'weekly') {
+      cronTime = { minute: parseInt(minute), hour: parseInt(hour), day: parseInt(day) };
+    } else {
+      return res.status(400).send({ error: 'Invalid schedule type' });
     }
 
-    cronTime = `${minute} ${hour} * * ${day}`;
-    schedule = { minute, hour, day };
-  } else {
-    return res.status(400).send({ error: 'Invalid schedule type' });
+    const job = {
+      name,
+      type,
+      cronTime,
+    };
+
+    addJob(job); // From your scheduler.js
+    res.send({ message: 'Job scheduled successfully!', cronTime });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ error: 'Server error while scheduling job' });
   }
-
-  const job = {
-    name,
-    type,
-    schedule,
-    cronTime, // store for display/debug purpose
-  };
-
-  addJob(job);
-  res.send({ message: 'Job scheduled successfully', cronTime, schedule });
 });
+
 
 
 const PORT = 3000;
