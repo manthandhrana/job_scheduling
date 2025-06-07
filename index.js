@@ -1,31 +1,52 @@
 const express = require('express');
+const { loadJobs, addJob, runScheduler } = require('./scheduler');
 const bodyParser = require('body-parser');
-const { loadJobs, addJob } = require('./scheduler');
 const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./swagger');
+const swaggerDocument = require('./swagger'); // If you have a swagger.js or YAML loader
 const app = express();
-
 
 app.use(bodyParser.json());
 app.use(express.json());
 
 loadJobs();
+runScheduler();
+
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.get('/', (req, res) => {
-res.status(200).send("Welcome to job scheduling site")
-})
+  res.status(200).send("Welcome to job scheduling site");
+});
+
+
 app.post('/schedule', (req, res) => {
   const { name, type, minute, hour, day } = req.body;
 
+  if (!name || !type) {
+    return res.status(400).send({ error: 'Missing required job name or type' });
+  }
+
   let cronTime = '';
+  let schedule = {};
 
   if (type === 'hourly') {
+    if (minute === undefined) return res.status(400).send({ error: 'Minute required for hourly job' });
+
     cronTime = `${minute} * * * *`;
+    schedule = { minute };
   } else if (type === 'daily') {
+    if (minute === undefined || hour === undefined) {
+      return res.status(400).send({ error: 'Hour and minute required for daily job' });
+    }
+
     cronTime = `${minute} ${hour} * * *`;
+    schedule = { minute, hour };
   } else if (type === 'weekly') {
+    if (minute === undefined || hour === undefined || day === undefined) {
+      return res.status(400).send({ error: 'Day, hour and minute required for weekly job' });
+    }
+
     cronTime = `${minute} ${hour} * * ${day}`;
+    schedule = { minute, hour, day };
   } else {
     return res.status(400).send({ error: 'Invalid schedule type' });
   }
@@ -33,12 +54,14 @@ app.post('/schedule', (req, res) => {
   const job = {
     name,
     type,
-    cronTime,
+    schedule,
+    cronTime, // store for display/debug purpose
   };
 
   addJob(job);
-  res.send({ message: 'Job scheduled', cronTime });
+  res.send({ message: 'Job scheduled successfully', cronTime, schedule });
 });
 
+
 const PORT = 3000;
-app.listen(PORT, () => console.log(`Scheduler running on http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`Scheduler running at http://localhost:${PORT}`));

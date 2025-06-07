@@ -1,32 +1,65 @@
 [
   {
     "name": "weeklyJob",
+    "type": "weekly"
+  },
+  {
+    "name": "hourlyJob",
+    "type": "hourly"
+  },
+  {
+    "name": "dailyJob",
+    "type": "daily"
+  },
+  {
+    "name": "dailyJob",
+    "type": "daily"
+  },
+  {
+    "name": "dailyJob",
+    "type": "daily"
+  },
+  {
+    "name": "hourlyJob",
+    "type": "hourly"
+  },
+  {
+    "name": "dailyHello",
+    "type": "daily",
+    "schedule": {}
+  },
+  {
+    "name": "weeklyHello",
+    "type": "weekly"
+  },
+  {
+    "name": "weeklyHello",
     "type": "weekly",
-    "cronTime": "0 8 * * 0"
+    "schedule": {}
   },
   {
-    "name": "hourlyJob",
-    "type": "hourly",
-    "cronTime": "15 * * * *"
-  },
-  {
-    "name": "dailyJob",
-    "type": "daily",
-    "cronTime": "30 10 * * *"
-  },
-  {
-    "name": "dailyJob",
-    "type": "daily",
-    "cronTime": "30 10 * * *"
+    "name": "weeklyJob",
+    "type": "weekly",
+    "schedule": {
+      "day": "0",
+      "hour": "8",
+      "minute": "0"
+    }
   },
   {
     "name": "dailyJob",
     "type": "daily",
-    "cronTime": "30 10 * * *"
+    "schedule": {
+      "minute": "30",
+      "hour": "10"
+    }
   },
   {
-    "name": "hourlyJob",
-    "type": "hourly",
-    "cronTime": "15 * * * *"
+    "name": "dailyJob",
+    "type": "daily",
+    "schedule": {
+      "minute": "30",
+      "hour": "10"
+    }
   }
 ]
