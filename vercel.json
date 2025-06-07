@@ -8,9 +8,12 @@
   ],
   "routes": [
     {
+      "src": "/swagger-ui/(.*)",
+      "dest": "/node_modules/swagger-ui-dist/$1"
+    },
+    {
       "src": "/(.*)",
-      "dest": "index.js",
-      "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
+      "dest": "index.js"
     }
   ]
 }
